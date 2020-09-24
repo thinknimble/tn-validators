@@ -9,6 +9,7 @@ export default {
   isNumber,
   NumberValidator,
   MustMatchValidator,
+  RequiredValidator,
 }
 
 /**
@@ -69,7 +70,7 @@ export class RequiredValidator extends Validator {
     if (typeof value === 'object') {
       throw new Error('Invalid value supplied')
     }
-    if (value.length < this.minLength) {
+    if (!value.length) {
       throw new Error(JSON.stringify({ code: this.code, message: this.message }))
     }
   }
