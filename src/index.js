@@ -61,7 +61,7 @@ export class MustMatchValidator extends Validator {
 }
 
 export class RequiredValidator extends Validator {
-  constructor({ message = 'This is a required field', code = 'required' }) {
+  constructor({ message = 'This is a required field', code = 'required' } = {}) {
     super({ message, code })
   }
   call(value) {
