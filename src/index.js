@@ -2,18 +2,13 @@
  * @module       validation
  * @description  Helper functions for model field validation.
  *
- * @author  William Huster <william@thinknimble.com>
+ * @author  William Huster <william@thinknimble.com> Pari Baker <pari@thinknimble.com> Corey Sutphin corey@thinknimble.com
  */
-export default {
-  notNullOrUndefined,
-  isNumber,
-  NumberValidator,
-}
 
 /**
  * Validator base class that other class-based validators will extend from.
  */
-class Validator {
+export class Validator {
   /**
    * Crete an instance of the validator.
    * @param {string} message - The error message to return if validation fails.
