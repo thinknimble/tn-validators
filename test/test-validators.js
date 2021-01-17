@@ -1,7 +1,6 @@
 import assert from 'assert'
 
-import validators from '../src/validation'
-import { NumberValidator, MinLengthValidator } from '../src/validation'
+import { NumberValidator, MinLengthValidator } from '../src/index'
 
 describe('Validators', function() {
   describe('#NumberValidator', function() {
@@ -21,6 +20,27 @@ describe('Validators', function() {
         assert.fail('An error was thrown when it should not be')
       }
     })
+
+    it('should return a custom error message if one is passed in', function() {
+      const validator = new NumberValidator({ message: 'Custom message' })
+      // const field = new fields.Field({validators: [new NumberValidator({message: 'Custom message'})]})
+      try {
+        validator.call('what')
+        assert.fail('Validation should not have been successful')
+      } catch (err) {
+        assert.equal(err.message, 'Custom message')
+      }
+    })
+  })
+  describe('#emailValidator', function() {
+    it('should throw an error if the supplied value is not a number', function() {
+      const validator = new EmailValidator()
+      try {
+        validator.call('what')
+        assert.fail('Field validation should have thrown an error')
+      } catch (err) {}
+    })
+
 
     it('should return a custom error message if one is passed in', function() {
       const validator = new NumberValidator({ message: 'Custom message' })
