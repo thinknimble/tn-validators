@@ -104,9 +104,7 @@ export class EmailValidator extends Validator {
     }
     try{
       EmailValidatorObj.validate(value)
-  
-        
-      
+      console.log(code, message)
     }catch{
       throw new Error(JSON.stringify({ code: this.code, message: this.message }))
 
