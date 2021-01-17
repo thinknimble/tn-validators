@@ -33,6 +33,24 @@ describe('Validators', function() {
         assert.fail('Field validation should have thrown an error')
       } catch (err) {}
     })
+    it('should not throw an error for emails', function() {
+      const validator = new EmailValidator()
+      try {
+        validator.call('test@test.com')
+      } catch (err) {}
+    })
+    it('should not throw an error for multidomain email', function() {
+      const validator = new EmailValidator()
+      try {
+        validator.call('test@test.com.cy')
+      } catch (err) {}
+    })
+    it('should not throw an error for multidomain email', function() {
+      const validator = new EmailValidator()
+      try {
+        validator.call('test@onmicrosoft.tn.com')
+      } catch (err) {}
+    })
     it('should return a custom error message if one is passed in', function() {
       const validator = new EmailValidator({ message: 'Custom message' })
       try {
