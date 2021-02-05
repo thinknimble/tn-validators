@@ -8,6 +8,8 @@
 /**
  * Validator base class that other class-based validators will extend from.
  */
+import * as EmailValidatorObj from 'email-validator';
+
 export class Validator {
   /**
    * Crete an instance of the validator.
@@ -86,6 +88,27 @@ export class MinLengthValidator extends Validator {
     if (value.length < this.minLength) {
       throw new Error(JSON.stringify({ code: this.code, message: this.message }))
     }
+  }
+}
+export class EmailValidator extends Validator {
+  constructor({
+    message = 'Please Enter a Valid Email',
+    code = 'invalidEmail',
+  } = {}) {
+    super({ message, code })
+  }
+
+  call(value) {
+    if (typeof value === 'object') {
+      throw new Error('Invalid value supplied')
+    }
+    try{
+      EmailValidatorObj.validate(value)
+    }catch{
+      throw new Error(JSON.stringify({ code: this.code, message: this.message }))
+
+    }
+
   }
 }
 
