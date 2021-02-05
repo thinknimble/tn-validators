@@ -63,7 +63,7 @@ export class RequiredValidator extends Validator {
     if (typeof value === 'object') {
       throw new Error('Invalid value supplied')
     }
-    if (!value.toString().length()) {
+    if (!value.toString().length) {
       throw new Error(JSON.stringify({ code: this.code, message: this.message }))
     }
   }
