@@ -1,6 +1,6 @@
 {
   "name": "@thinknimble/tn-validators",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Field Validators",
   "author": "William Huster <william@thinknimble.com>, Pari Baker <pari@thinknimble.com>",
   "license": "SEE LICENSE IN LICENSE.TXT",
