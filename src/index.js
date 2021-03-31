@@ -62,10 +62,7 @@ export class RequiredValidator extends Validator {
     super({ message, code })
   }
   call(value) {
-    if (typeof value === 'object') {
-      throw new Error('Invalid value supplied')
-    }
-    if (!value.toString().length) {
+    if (!value || !value.toString().length) {
       throw new Error(JSON.stringify({ code: this.code, message: this.message }))
     }
   }
@@ -82,10 +79,7 @@ export class MinLengthValidator extends Validator {
   }
 
   call(value) {
-    if (typeof value === 'object') {
-      throw new Error('Invalid value supplied')
-    }
-    if (value.length < this.minLength) {
+    if (!value || value.length < this.minLength) {
       throw new Error(JSON.stringify({ code: this.code, message: this.message }))
     }
   }
@@ -96,15 +90,10 @@ export class EmailValidator extends Validator {
   }
 
   call(value) {
-    if (typeof value === 'object') {
-      throw new Error('Invalid value supplied')
-    }
     try {
       const res = EmailValidatorObj.validate(value)
       if (!res) {
         throw new Error(JSON.stringify({ code: this.code, message: this.message }))
-      } else {
-        return
       }
     } catch {
       throw new Error(JSON.stringify({ code: this.code, message: this.message }))

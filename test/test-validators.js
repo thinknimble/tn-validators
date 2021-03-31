@@ -1,6 +1,7 @@
 import assert from 'assert'
 
-import { NumberValidator, MinLengthValidator, EmailValidator } from '../src/index'
+
+import { NumberValidator, MinLengthValidator, EmailValidator,RequiredValidator } from '../src/index'
 
 describe('Validators', function() {
   describe('#NumberValidator', function() {
@@ -20,6 +21,9 @@ describe('Validators', function() {
         assert.fail('An error was thrown when it should not be')
       }
     })
+
+
+  })
 
 
   })
@@ -67,6 +71,7 @@ describe('Validators', function() {
 
 
 
+
   describe('#MinLengthValidator', function() {
     const validator = new MinLengthValidator({ minLength: 8 })
 
@@ -94,4 +99,21 @@ describe('Validators', function() {
       } catch (err) {}
     })
   })
-})
+
+
+
+  describe('#RequiredValidator', function() {
+    const validator = new RequiredValidator()
+
+    it('should throw an error if the supplied value is empty or null', function() {
+      try {
+        validator.call(null)
+        
+      } catch (err) {
+        throw err
+        
+      }
+    })
+
+ 
+  })
