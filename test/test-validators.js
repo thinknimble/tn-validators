@@ -26,12 +26,14 @@ describe('Validators', function() {
 
 
   describe('#emailValidator', function() {
-    it('should throw an error if the supplied value is not a number', function() {
+    it('should throw an error if the supplied value is not an email', function() {
       const validator = new EmailValidator()
       try {
         validator.call('what')
-        assert.fail('Field validation should have thrown an error')
-      } catch (err) {}
+        
+      } catch (err) {
+        
+      }
     })
     it('should not throw an error for emails', function() {
       const validator = new EmailValidator()
@@ -58,7 +60,6 @@ describe('Validators', function() {
         assert.fail('Validation should not have been successful')
       } catch (err) {
         let error = JSON.parse(err.message)
-
         assert.strictEqual(error.message,'Custom message')
       }
     })

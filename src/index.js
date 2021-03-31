@@ -91,10 +91,7 @@ export class MinLengthValidator extends Validator {
   }
 }
 export class EmailValidator extends Validator {
-  constructor({
-    message = 'Please Enter a Valid Email',
-    code = 'invalidEmail',
-  } = {}) {
+  constructor({ message = 'Please Enter a Valid Email', code = 'invalidEmail' } = {}) {
     super({ message, code })
   }
 
@@ -102,13 +99,16 @@ export class EmailValidator extends Validator {
     if (typeof value === 'object') {
       throw new Error('Invalid value supplied')
     }
-    try{
-      EmailValidatorObj.validate(value)
-    }catch{
+    try {
+      const res = EmailValidatorObj.validate(value)
+      if (!res) {
+        throw new Error(JSON.stringify({ code: this.code, message: this.message }))
+      } else {
+        return
+      }
+    } catch {
       throw new Error(JSON.stringify({ code: this.code, message: this.message }))
-
     }
-
   }
 }
 
