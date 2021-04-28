@@ -35,7 +35,7 @@ export class NumberValidator extends Validator {
   }
 
   call(value) {
-    if (!value || !value.length || !Number.isInteger(value.isInteger(parseFloat(value)))) {
+    if (!value || !value.length || !Number.isInteger(parseFloat(value))) {
       throw new Error(JSON.stringify({ code: this.code, message: this.message }))
     }
   }
