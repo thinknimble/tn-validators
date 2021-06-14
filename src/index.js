@@ -8,7 +8,7 @@
 /**
  * Validator base class that other class-based validators will extend from.
  */
-import * as EmailValidatorObj from 'email-validator';
+import * as EmailValidatorObj from 'email-validator'
 
 export class Validator {
   /**
@@ -41,17 +41,28 @@ export class NumberValidator extends Validator {
   }
 }
 export class MustMatchValidator extends Validator {
-  constructor({ message = 'Value must match', code = 'mustMatch', matcher = null } = {}) {
+  constructor({
+    message = 'Value must match',
+    code = 'mustMatch',
+    matcher = null,
+    form = null,
+  } = {}) {
     super({ message, code })
-    this._matcher = matcher
+    this.matcher = matcher
+    if (form) {
+      this._matchingField = form.field[this.matcher]
+    } else {
+      this._matchingField = null
+    }
   }
+
   get matchingVal() {
-    return this._matcher.value
+    return this._matchingField ? this._matchingField.value : null
   }
 
   call(value) {
     //this.matchingVal = extraArgs
-    if (this.matchingVal && this.matchingVal !== value) {
+    if (this.matchingVal !== value) {
       throw new Error(JSON.stringify({ code: this.code, message: this.message }))
     }
   }
