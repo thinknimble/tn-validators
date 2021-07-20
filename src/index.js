@@ -9,6 +9,7 @@
  * Validator base class that other class-based validators will extend from.
  */
 import * as EmailValidatorObj from 'email-validator'
+import moment from 'moment'
 
 export class Validator {
   /**
@@ -73,8 +74,14 @@ export class RequiredValidator extends Validator {
     super({ message, code })
   }
   call(value) {
-    if (!value || !value.toString().length) {
+    if (!value) {
       throw new Error(JSON.stringify({ code: this.code, message: this.message }))
+    } else if (value) {
+      if (Array.isArray(value) && !value.length) {
+        throw new Error(JSON.stringify({ code: this.code, message: this.message }))
+      } else if (!value.toString().length) {
+        throw new Error(JSON.stringify({ code: this.code, message: this.message }))
+      }
     }
   }
 }
@@ -90,7 +97,8 @@ export class MinLengthValidator extends Validator {
   }
 
   call(value) {
-    if (!value || value.length < this.minLength) {
+    new RequiredValidator({ message: this.message, code: this.code }).call(value)
+    if (!value || value.toString().length < this.minLength) {
       throw new Error(JSON.stringify({ code: this.code, message: this.message }))
     }
   }
@@ -108,6 +116,117 @@ export class EmailValidator extends Validator {
       }
     } catch {
       throw new Error(JSON.stringify({ code: this.code, message: this.message }))
+    }
+  }
+}
+
+new EmailValidator().call('test@test.com')
+export class MinDateValidator extends Validator {
+  constructor({ message = 'Must meet minimum date', code = 'minDate', min = moment() } = {}) {
+    super({ message, code })
+    this.min = min
+  }
+
+  call(value) {
+    if (!value) {
+      throw new Error(
+        JSON.stringify({
+          code: this.code,
+          message: `Please enter a valid date`,
+        }),
+      )
+    }
+    try {
+      moment(this.min)
+    } catch (e) {
+      console.log(e)
+      throw new Error(
+        JSON.stringify({ code: this.code, message: 'Please enter a valid Date for the minimum' }),
+      )
+    }
+    try {
+      moment(value)
+    } catch (e) {
+      throw new Error(JSON.stringify({ code: this.code, message: 'Please enter a valid Date' }))
+    }
+    if (moment(value).isBefore(moment(this.min), 'day')) {
+      throw new Error(
+        JSON.stringify({
+          code: this.code,
+          message: `Please enter a date greater than ${moment(this.min).format('MM-DD-YYYY')}`,
+        }),
+      )
+    }
+  }
+}
+
+export class MaxDateValidator extends Validator {
+  constructor({ message = 'Must meet minimum date', code = 'maxDate', max = moment() } = {}) {
+    super({ message, code })
+    this.max = max
+  }
+
+  call(value) {
+    if (!value) {
+      throw new Error(
+        JSON.stringify({
+          code: this.code,
+          message: `Please enter a valid date`,
+        }),
+      )
+    }
+    try {
+      moment(this.max)
+    } catch (e) {
+      throw new Error(
+        JSON.stringify({ code: this.code, message: 'Please enter a valid Date for the minimum' }),
+      )
+    }
+    try {
+      moment(value)
+    } catch (e) {
+      throw new Error(JSON.stringify({ code: this.code, message: 'Please enter a valid Date' }))
+    }
+    if (moment(value).isAfter(moment(this.max), 'day')) {
+      throw new Error(
+        JSON.stringify({
+          code: this.code,
+          message: `Please enter a date greater than ${moment(this.max).format('MM-DD-YYYY')}`,
+        }),
+      )
+    }
+  }
+}
+
+export class MinimumValueValidator extends Validator {
+  constructor({ message = 'Must meet minimum value', code = 'minValue', min = 0 } = {}) {
+    super({ message, code })
+    this.min = min
+  }
+
+  call(value) {
+    if (!value || !Number.isInteger(parseFloat(value))) {
+      throw new Error(JSON.stringify({ code: this.code, message: 'Please enter a valid Number' }))
+    } else {
+      if (value < this.min) {
+        throw new Error(JSON.stringify({ code: this.code, message: this.message }))
+      }
+    }
+  }
+}
+export class MaximumValueValidator extends Validator {
+  constructor({ message = 'Must meet minimum value', code = 'maxValue', max = 10 } = {}) {
+    super({ message, code })
+    this.max = max
+  }
+
+  call(value) {
+    if (!value || !Number.isInteger(parseFloat(value))) {
+      throw new Error(JSON.stringify({ code: this.code, message: 'Please enter a valid Number' }))
+    } else {
+      if (value > this.max) {
+        throw new Error(JSON.stringify({ code: this.code, message: this.message }))
+      }
     }
   }
 }

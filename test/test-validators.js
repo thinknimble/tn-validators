@@ -1,119 +1,154 @@
 import assert from 'assert'
+import moment from 'moment'
 
+import {
+  NumberValidator,
+  MinLengthValidator,
+  EmailValidator,
+  RequiredValidator,
+  MinDateValidator,
+  MaxDateValidator,
+} from '../src/index.js'
 
-import { NumberValidator, MinLengthValidator, EmailValidator,RequiredValidator } from '../src/index'
+describe('#emailValidator', function () {
+  it('should throw an error if the supplied value is not an email', function () {
+    const validator = new EmailValidator()
+    try {
+      validator.call('what')
+    } catch (err) {
+      assert.strictEqual(JSON.parse(err.message).code, 'invalidEmail')
+    }
+  })
+  it('should not throw an error for emails', function () {
+    const validator = new EmailValidator()
+    try {
+      validator.call(null)
+    } catch (err) {
+      assert.strictEqual(JSON.parse(err.message).code, 'invalidEmail')
+    }
+  })
+  it('should not throw an error for multidomain email', function () {
+    const validator = new EmailValidator()
 
-describe('Validators', function() {
-  describe('#NumberValidator', function() {
-    it('should throw an error if the supplied value is not a number', function() {
-      const validator = new NumberValidator()
-      try {
-        validator.call('what')
-        assert.fail('Field validation should have thrown an error')
-      } catch (err) {}
-    })
+    validator.call('pari@baker.com.cy')
+  })
+})
 
-    it('should do nothing if a valid number is supplied', function() {
-      const validator = new NumberValidator()
-      try {
-        validator.call(42)
-      } catch (err) {
-        assert.fail('An error was thrown when it should not be')
-      }
-    })
+describe('#MinLengthValidator', function () {
+  const validator = new MinLengthValidator({ minLength: 8 })
 
-
+  it('should throw an error if the supplied value is less than the required length', function () {
+    try {
+      validator.call('what')
+    } catch (err) {
+      assert.strictEqual(JSON.parse(err.message).code, 'minLength')
+    }
   })
 
-
+  it('should throw an error if the supplied value is null', function () {
+    try {
+      validator.call(null)
+    } catch (err) {
+      assert.strictEqual(JSON.parse(err.message).code, 'minLength')
+    }
   })
 
-
-  describe('#emailValidator', function() {
-    it('should throw an error if the supplied value is not an email', function() {
-      const validator = new EmailValidator()
-      try {
-        validator.call('what')
-        
-      } catch (err) {
-        
-      }
-    })
-    it('should not throw an error for emails', function() {
-      const validator = new EmailValidator()
-      try {
-        validator.call('test@test.com')
-      } catch (err) {}
-    })
-    it('should not throw an error for multidomain email', function() {
-      const validator = new EmailValidator()
-      try {
-        validator.call('test@test.com.cy')
-      } catch (err) {}
-    })
-    it('should not throw an error for multidomain email', function() {
-      const validator = new EmailValidator()
-      try {
-        validator.call('test@onmicrosoft.tn.com')
-      } catch (err) {}
-    })
-    it('should return a custom error message if one is passed in', function() {
-      const validator = new EmailValidator({ message: 'Custom message' })
-      try {
-        validator.call('what')
-        assert.fail('Validation should not have been successful')
-      } catch (err) {
-        let error = JSON.parse(err.message)
-        assert.strictEqual(error.message,'Custom message')
-      }
-    })
+  it('throw an error if the value is a number less than the length ', function () {
+    try {
+      validator.call(8)
+    } catch (err) {
+      assert.strictEqual(JSON.parse(err.message).code, 'minLength')
+    }
   })
 
-
-
-
-  describe('#MinLengthValidator', function() {
-    const validator = new MinLengthValidator({ minLength: 8 })
-
-    it('should throw an error if the supplied value is less than the required length', function() {
-      try {
-        validator.call('what')
-        assert.fail('Field validation should have thrown an error')
-      } catch (err) {}
-    })
-
-    it('should do nothing if a valid number is supplied', function() {
-      try {
-        validator.call('eighteight')
-      } catch (err) {
-        assert.fail('An error was thrown when it should not be')
-      }
-    })
-
-
-
-    it('should throw an error if a value that can not be coerced to a string is supplied', function() {
-      try {
-        validator.call({ val: 'This is a random object' })
-        assert.fail('Validation should not have been successful')
-      } catch (err) {}
-    })
+  it('should throw an error if a value that can not be coerced to a string is supplied', function () {
+    try {
+      validator.call({ val: 'This is a random object' })
+    } catch (err) {
+      console.log(err)
+      assert.strictEqual(JSON.parse(err.message).code, 'minLength')
+    }
   })
+})
 
+describe('#RequiredValidator', function () {
+  let message = 'Failed to validate'
+  const validator = new RequiredValidator({ message: 'Failed to validate' })
 
-
-  describe('#RequiredValidator', function() {
-    const validator = new RequiredValidator()
-
-    it('should throw an error if the supplied value is empty or null', function() {
-      try {
-        validator.call(null)
-        
-      } catch (err) {
-        throw err
-        
-      }
-    })
-
- 
+  it('should throw an error if the supplied value  null', function () {
+    try {
+      validator.call(null)
+    } catch (e) {
+      assert.strictEqual(JSON.parse(e.message).message, message)
+    }
   })
+  it('should not throw an error if this list has an item', function () {
+    validator.call(['1'])
+  })
+  it('should throw an error if the supplied value is empty array', function () {
+    try {
+      validator.call([])
+    } catch (e) {
+      assert.strictEqual(JSON.parse(e.message).message, message)
+    }
+  })
+  it('should not throw an error based on length', function () {
+    try {
+      validator.call('')
+    } catch (e) {
+      assert.strictEqual(JSON.parse(e.message).message, message)
+    }
+  })
+})
+describe('#MinDateValdiator', function () {
+  let message = 'Please Enter a date after this date'
+  const validator = new MinDateValidator({ message: message })
+
+  it('Should throw an error if date is null', function () {
+    try {
+      validator.call(null)
+    } catch (e) {
+      assert.strictEqual(JSON.parse(e.message).code, 'minDate')
+    }
+  })
+  it('Should throw an error if date is less than', function () {
+    try {
+      validator.call(moment().subtract(1, 'days'))
+    } catch (e) {
+      assert.strictEqual(JSON.parse(e.message).code, 'minDate')
+    }
+  })
+  it('Should not throw an error if date is greater than', function () {
+    try {
+      validator.call(moment().add(1, 'days'))
+    } catch (e) {
+      assert.strictEqual(JSON.parse(e.message).code, 'minDate')
+    }
+  })
+})
+describe('#MaxDateValdiator', function () {
+  let message = 'Please Enter a date after this date'
+  const validator = new MaxDateValidator({ message: message })
+
+  it('Should throw an error if date is null', function () {
+    try {
+      validator.call(null)
+    } catch (e) {
+      assert.strictEqual(JSON.parse(e.message).code, 'maxDate')
+    }
+  })
+  it('Should not throw an error if date is less than', function () {
+    try {
+      validator.call(moment().subtract(1, 'days'))
+    } catch (e) {
+      assert.strictEqual(JSON.parse(e.message).code, 'maxDate')
+    }
+  })
+  it('Should throw an error if date is greater than', function () {
+    try {
+      validator.call(moment().add(1, 'days'))
+    } catch (e) {
+      assert.strictEqual(JSON.parse(e.message).code, 'maxDate')
+    }
+  })
+})
