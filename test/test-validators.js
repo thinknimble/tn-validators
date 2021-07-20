@@ -119,11 +119,7 @@ describe('#MinDateValdiator', function () {
     }
   })
   it('Should not throw an error if date is greater than', function () {
-    try {
-      validator.call(moment().add(1, 'days'))
-    } catch (e) {
-      assert.strictEqual(JSON.parse(e.message).code, 'minDate')
-    }
+    validator.call(moment().add(1, 'days'))
   })
 })
 describe('#MaxDateValdiator', function () {
@@ -138,11 +134,7 @@ describe('#MaxDateValdiator', function () {
     }
   })
   it('Should not throw an error if date is less than', function () {
-    try {
-      validator.call(moment().subtract(1, 'days'))
-    } catch (e) {
-      assert.strictEqual(JSON.parse(e.message).code, 'maxDate')
-    }
+    validator.call(moment().subtract(0, 'days'))
   })
   it('Should throw an error if date is greater than', function () {
     try {
